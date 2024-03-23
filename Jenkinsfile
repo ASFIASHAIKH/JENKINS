@@ -8,22 +8,22 @@ pipeline {
         // FOR DEV
         DEV_DH_URL    	= "https://registry.hub.docker.com/asfiyask/dev"
         DEV_DH_CREDS  	= "Dockerhub_creds"
-        DEV_DH_TAG    	= "$(env.TAG)"
+        DEV_DH_TAG    	= "${env.TAG}"
 
         // FOR QA
         QA_DH_URL	  	= "https://registry.hub.docker.com/asfiyask/qa"
         QA_DH_CREDS   	= "Dockerhub_creds"
-        QA_DH_TAG 	 	= "$(env.TAG)"
+        QA_DH_TAG 	 	= "${env.TAG}"
 
         // FOR STAGE
         STAGE_DH_URL  	= "https://registry.hub.docker.com/asfiyask/stage"
         STAGE_DH_CREDS 	= "Dockerhub_creds"
-        STAGE_DH_TAG	= "$(env.TAG)"
+        STAGE_DH_TAG	= "${env.TAG}"
 
         // FOR PROD
         PROD_DH_URL		= "https://registry.hub.docker.com/asfiyask/prod"
         PROD_DH_CREDS	= "Dockerhub_creds"
-        PROD_DH_TAG		= "$(env.TAG)"
+        PROD_DH_TAG		= "${env.TAG}"
 
     }
     stages {
