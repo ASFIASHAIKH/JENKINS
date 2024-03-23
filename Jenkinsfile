@@ -68,17 +68,17 @@ pipeline {
 
 
 //FOR DOCKER PUSH TAG FOR DEV
-dockerBuildPush(string SRC_DH_URL , string SRC_DH_CREDS, string SRC_DH_TAG) {
-
-def app = docker.build('$(env.SRC_DH_TAG)')
-                    docker.withRegistry('$(env.SRC_DH_URL)', '$(env.SRC_DH_CREDS)') {
-                        app.push()
-                    }
-                }	
+def dockerBuildPush(string SRC_DH_URL , string SRC_DH_CREDS, string SRC_DH_TAG) {
+        def app = docker.build('$(env.SRC_DH_TAG)')
+        docker.withRegistry('$(env.SRC_DH_URL)', '$(env.SRC_DH_CREDS)') {
+        app.push()
+        }
+}	
 
 //FOR DOCKER PULL TAG PUSH FOR QA , STAGE AND PROD
-dockerPULLTAGPUSH(string SRC_DH_URL , string SRC_DH_CREDS , string SRC_DH_TAG , string DEST_DH_URL , string DEST_DH_CREDS , string DEST_DH_TAG) {
-		//FOR PULL 
+def dockerPULLTAGPUSH(string SRC_DH_URL , string SRC_DH_CREDS , string SRC_DH_TAG , string DEST_DH_URL , string DEST_DH_CREDS , string DEST_DH_TAG) {
+		
+        //FOR PULL 
 		docker.withRegistry('$(env.SRC_DH_URL)', '$(env.SRC_DH_CREDS)') {
 		docker.image("$(env.SRC_DH_TAG)").pull
         }
