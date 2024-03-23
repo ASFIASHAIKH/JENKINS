@@ -79,18 +79,18 @@ def dockerBuildPush(string SRC_DH_URL , string SRC_DH_CREDS, string SRC_DH_TAG) 
 def dockerPULLTAGPUSH(string SRC_DH_URL , string SRC_DH_CREDS , string SRC_DH_TAG , string DEST_DH_URL , string DEST_DH_CREDS , string DEST_DH_TAG) {
 		
         //FOR PULL 
-		docker.withRegistry('$(env.SRC_DH_URL)', '$(env.SRC_DH_CREDS)') {
-		docker.image("$(env.SRC_DH_TAG)").pull
+		docker.withRegistry('$(SRC_DH_URL)', '$(SRC_DH_CREDS)') {
+		docker.image('$(SRC_DH_TAG)').pull
         }
 		sh 'echo Image Pulled from Successfully..!'
 		
 		//FOR TAG
 		sh 'echo Taggig Docker Image'
-		sh "docker tag $(env.SRC_DH_TAG) , $(env.DEST_DH_TAG)"
+		sh "docker tag $(SRC_DH_TAG) , $(DEST_DH_TAG)"
 		
 		//FOR PUSH
-		docker.withRegistry('$(env.DEST_DH_URL)', '$(env.DEST_DH_CREDS)') {
-		docker.image("$(env.DEST_DH_TAG)").push()
+		docker.withRegistry('$(DEST_DH_URL)', '$(DEST_DH_CREDS)') {
+		docker.image("$(DEST_DH_TAG)").push()
         }
 		
 		sh 'echo Image Pushed from Successfully..!'
