@@ -31,7 +31,7 @@ pipeline {
             steps {
                 echo "Docker image built successfully... Now logging in to Docker Hub and pushing the image."
                 
-                dockerBuildPush(env.DEV_DH_URL, env.DEV_DH_CREDS, env.DEV_DH_TAG)
+                dockerBuildPush("${env.DEV_DH_URL}", "${env.DEV_DH_CREDS}", "${env.DEV_DH_TAG}")
 
                 sh "echo Docker Image Pushed to DEV"
                 sh "echo Deleting Local Docker DEV Image"
@@ -39,17 +39,17 @@ pipeline {
         }
         stage('PULL TAG PUSH TO QA') {
             steps {
-                dockerPULLTAGPUSH(env.DEV_DH_URL, env.DEV_DH_CREDS, env.DEV_DH_TAG, env.QA_DH_URL, env.QA_DH_CREDS, env.QA_DH_TAG)
+                dockerPULLTAGPUSH("${env.DEV_DH_URL}", "${env.DEV_DH_CREDS}", "${env.DEV_DH_TAG}", "${env.QA_DH_URL}", "${env.QA_DH_CREDS}", "${env.QA_DH_TAG}")
             }
         }
         stage('PULL TAG PUSH TO STAGE') {
             steps {
-                dockerPULLTAGPUSH(env.QA_DH_URL, env.QA_DH_CREDS, env.QA_DH_TAG, env.STAGE_DH_URL, env.STAGE_DH_CREDS, env.STAGE_DH_TAG)
+                dockerPULLTAGPUSH("${env.QA_DH_URL}", "${env.QA_DH_CREDS}", "${env.QA_DH_TAG}", "${env.STAGE_DH_URL}", "${env.STAGE_DH_CREDS}", "${env.STAGE_DH_TAG}")
             }
         }
         stage('PULL TAG PUSH TO PROD') {
             steps {
-                dockerPULLTAGPUSH(env.STAGE_DH_URL, env.STAGE_DH_CREDS, env.STAGE_DH_TAG, env.PROD_DH_URL, env.PROD_DH_CREDS, env.PROD_DH_TAG)
+                dockerPULLTAGPUSH("${env.STAGE_DH_URL}",  "${env.STAGE_DH_CREDS}", "${env.STAGE_DH_TAG}", "${env.PROD_DH_URL}", "${env.PROD_DH_CREDS}", "${env.PROD_DH_TAG}")
             }
         }
     }
