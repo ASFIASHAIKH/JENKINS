@@ -37,19 +37,64 @@ pipeline {
                 sh "echo Deleting Local Docker DEV Image"
             }
         }
+
         stage('PULL TAG PUSH TO QA') {
             steps {
-                dockerPULLTAGPUSH("${env.DEV_DH_URL}", "${env.DEV_DH_CREDS}", "${env.DEV_DH_TAG}", "${env.QA_DH_URL}", "${env.QA_DH_CREDS}", "${env.QA_DH_TAG}")
+                script {
+                    docker.withRegistry("${env.DEV_DH_URL}", "${env.DEV_DH_CREDS}") {
+                        docker.image("${env.DEV_DH_TAG}").pull()
+                    }
+                }
+
+                sh 'echo Image pulled from DEV'
+                sh 'echo Tagging Docker image from Dev to QA'
+                sh "docker tag teamcloudethix/dev-cdex-jenkins:latest teamcloudethix/qa-cdex-jenkins:latest" 
+
+                script {
+                    docker.withRegistry("${env.QA_DH_URL}", "${env.QA_DH_CREDS}") {
+                        docker.image("${env.QA_DH_TAG}").push()
+                    }
+                }
             }
         }
+
         stage('PULL TAG PUSH TO STAGE') {
             steps {
-                dockerPULLTAGPUSH("${env.QA_DH_URL}", "${env.QA_DH_CREDS}", "${env.QA_DH_TAG}", "${env.STAGE_DH_URL}", "${env.STAGE_DH_CREDS}", "${env.STAGE_DH_TAG}")
+                script {
+                    docker.withRegistry("${env.QA_DH_URL}", "${env.QA_DH_CREDS}") {
+                        docker.image("${env.QA_DH_TAG}").pull()
+                    }
+                }
+
+                sh 'echo Image pulled from QA'
+                sh 'echo Tagging Docker image from QA to STAGE'
+                sh "docker tag teamcloudethix/dev-cdex-jenkins:latest teamcloudethix/qa-cdex-jenkins:latest" 
+
+                script {
+                    docker.withRegistry("${env.STAGE_DH_URL}", "${env.STAGE_DH_CREDS}") {
+                        docker.image("${env.STAGE_DH_TAG}").push()
+                    }
+                }
             }
         }
+
         stage('PULL TAG PUSH TO PROD') {
             steps {
-                dockerPULLTAGPUSH("${env.STAGE_DH_URL}",  "${env.STAGE_DH_CREDS}", "${env.STAGE_DH_TAG}", "${env.PROD_DH_URL}", "${env.PROD_DH_CREDS}", "${env.PROD_DH_TAG}")
+                script {
+                    docker.withRegistry("${env.STAGE_DH_URL}", "${env.STAGE_DH_CREDS}") {
+                        docker.image("${env.STAGE_DH_TAG}").pull()
+                    }
+                }
+
+                sh 'echo Image pulled from STAGE'
+                sh 'echo Tagging Docker image from STAGE to PROD'
+                sh "docker tag teamcloudethix/dev-cdex-jenkins:latest teamcloudethix/qa-cdex-jenkins:latest" 
+
+                script {
+                    docker.withRegistry("${env.PROD_DH_URL}", "${env.PROD_DH_CREDS}") {
+                        docker.image("${env.PROD_DH_TAG}").push()
+                    }
+                }
             }
         }
     }
@@ -60,34 +105,4 @@ pipeline {
             deleteDir()
         }
     }
-}
-
-// For Docker Build and Push
-def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
-    def app = docker.build("${SRC_DH_TAG}")
-    docker.withRegistry("${SRC_DH_URL}", "${SRC_DH_CREDS}") {
-        app.push()
-    }
-}
-
-// For Docker Pull, Tag, and Push
-def dockerPULLTAGPUSH(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
-    // Pulling image
-    docker.withRegistry("${SRC_DH_URL}", "${SRC_DH_CREDS}") {
-        docker.image("${SRC_DH_TAG}").pull()
-    }
-    sh 'echo Image Pulled Successfully..!'
-
-    // Tagging Docker Image
-    sh 'echo Tagging Docker Image'
-    sh "docker tag ${SRC_DH_TAG} ${DEST_DH_TAG}"
-
-    // Pushing to Destination Registry
-    docker.withRegistry("${DEST_DH_URL}", "${DEST_DH_CREDS}") {
-        docker.image("${DEST_DH_TAG}").push()
-    }
-    sh 'echo Image Pushed Successfully..!'
-    sh 'echo Deleting Local Docker Image'
-    sh "docker image rm ${SRC_DH_TAG}"
-    sh "docker image rm ${DEST_DH_TAG}"
 }
