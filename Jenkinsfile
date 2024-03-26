@@ -34,7 +34,7 @@ pipeline {
                 dockerBuildPush("${env.DEV_DH_URL}", "${env.DEV_DH_CREDS}", "${env.DEV_DH_TAG}")
 
                 sh "echo Docker Image Pushed to DEV"
-                sh "echo Deleting Local Docker DEV Image"
+                //sh "echo Deleting Local Docker DEV Image"
             }
         }
 
